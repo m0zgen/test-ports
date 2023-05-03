@@ -8,7 +8,8 @@ SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 cd $SCRIPT_PATH
 
 LOG_FILE="$SCRIPT_PATH/test-ports.log"
-LOG_ENABLED=1
+LOG_ENABLED=0
+ERR_LOG_ENABLED=1
 
 # ---------------------------------------------------------------------\
 
@@ -28,14 +29,14 @@ if [ -n "$1" ] && [ -f "$1" ]; then
       if  (echo >/dev/tcp/"$machine"/"$port") >/dev/null 2>&1; then
         echo "OK ( $(get_datetime) ): $machine -> $port"
         
-        if [[ ${LOG_ENABLED} -eq 1 ]]; then
+        if [ ${LOG_ENABLED} -eq 1 ]; then
           echo "OK ( $(get_datetime) ): $machine -> $port" >> "$LOG_FILE"
         fi
 
       else
         echo "ERROR ( $(get_datetime) ): $machine -> $port"
         
-        if [[ ${LOG_ENABLED} -eq 1 ]]; then
+        if [ ${LOG_ENABLED} -eq 1 ] | [ ${ERR_LOG_ENABLED} -eq 1 ]; then
           echo "ERROR ( $(get_datetime) ): $machine -> $port" >> "$LOG_FILE"
         fi
       fi
