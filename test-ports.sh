@@ -7,6 +7,9 @@ PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 cd $SCRIPT_PATH
 
+LOG_FILE="$SCRIPT_PATH/test-ports.log"
+LOG_ENABLED=1
+
 # ---------------------------------------------------------------------\
 
 # Get datetime
@@ -24,8 +27,17 @@ if [ -n "$1" ] && [ -f "$1" ]; then
     for port in $ports; do
       if  (echo >/dev/tcp/"$machine"/"$port") >/dev/null 2>&1; then
         echo "OK ( $(get_datetime) ): $machine -> $port"
+        
+        if [[ ${LOG_ENABLED} -eq 1 ]]; then
+          echo "OK ( $(get_datetime) ): $machine -> $port" >> "$LOG_FILE"
+        fi
+
       else
         echo "ERROR ( $(get_datetime) ): $machine -> $port"
+        
+        if [[ ${LOG_ENABLED} -eq 1 ]]; then
+          echo "ERROR ( $(get_datetime) ): $machine -> $port" >> "$LOG_FILE"
+        fi
       fi
     done
     IFS=$OLD_IFS
